@@ -23,7 +23,12 @@ int main()
 
     printf("\n");
 
-    TraceLoggingRegister(MyProvider);
+    err = TraceLoggingRegister(MyProvider);
+    if (err != 0)
+    {
+        printf("Error registering MyProvider err=%d\n", err);
+        return err;
+    }
 
     event_level const event1_level = event_level_information;
     uint64_t const event1_keyword = 0x1;
