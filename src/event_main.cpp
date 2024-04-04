@@ -33,6 +33,13 @@ int main()
     event_level const event1_level = event_level_information;
     uint64_t const event1_keyword = 0x1;
 
+    TraceLoggingWrite(
+        MyProvider,                               // Provider to use for the event.
+        "SimpleEvent",                                 // Event name.
+        TraceLoggingLevel(event1_level),          // Event severity level.
+        TraceLoggingKeyword(event1_keyword),      // Event category bits.
+        TraceLoggingUInt32(iteration));           // uint32 field named "iteration".
+    
     printf("Waiting for provider to be enabled.\n");
     while (!TraceLoggingProviderEnabled(MyProvider, event1_level, event1_keyword))
     {
