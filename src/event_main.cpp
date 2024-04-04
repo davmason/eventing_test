@@ -43,7 +43,9 @@ int main()
     printf("Waiting for provider to be enabled.\n");
     while (!TraceLoggingProviderEnabled(MyProvider, event1_level, event1_keyword))
     {
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        printf("MyProviderName_L4K1 Event1 status=%x\n",
+            TraceLoggingProviderEnabled(MyProvider, event1_level, event1_keyword));
+        std::this_thread::sleep_for(std::chrono::milliseconds(5000));
     }
 
     printf("Provider enabled.\n");
