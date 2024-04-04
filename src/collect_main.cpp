@@ -58,6 +58,7 @@ main(int argc, char* argv[])
 
     if (enabled == 0)
     {
+    	fprintf(stderr, "enabled==0\n");
         return error;
     }
 
