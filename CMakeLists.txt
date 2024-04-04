@@ -29,7 +29,7 @@ set(COLLECT_SOURCES
     src/collect_main.cpp
     src/libtracepoint/TracepointCache.cpp
     src/libtracepoint/TracepointPath.cpp
-    src/libtracepoint/TracePointSession.cpp
+    src/libtracepoint/TracepointSession.cpp
     src/libtracepoint/UniqueHandles.cpp
     src/libtracepoint/PerfByteReader.cpp
     src/libtracepoint/PerfDataFile.cpp
