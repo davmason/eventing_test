@@ -38,8 +38,8 @@ int main()
         "SimpleEvent",                                 // Event name.
         TraceLoggingLevel(event1_level),          // Event severity level.
         TraceLoggingKeyword(event1_keyword),      // Event category bits.
-        TraceLoggingUInt32(iteration));           // uint32 field named "iteration".
-    
+        TraceLoggingUInt32(0));           // uint32 field named "iteration".
+
     printf("Waiting for provider to be enabled.\n");
     while (!TraceLoggingProviderEnabled(MyProvider, event1_level, event1_keyword))
     {
