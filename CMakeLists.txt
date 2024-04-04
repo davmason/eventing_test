@@ -26,6 +26,17 @@ set(EVENT_SOURCES
 add_executable(eventing_test ${EVENT_SOURCES})
 
 set(COLLECT_SOURCES
-    src/collect_main.cpp)
+    src/collect_main.cpp
+    src/libtracepoint/TracepointCache.cpp
+    src/libtracepoint/TracepointPath.cpp
+    src/libtracepoint/TracePointSession.cpp
+    src/libtracepoint/UniqueHandles.cpp
+    src/libtracepoint/PerfByteReader.cpp
+    src/libtracepoint/PerfDataFile.cpp
+    src/libtracepoint/PerfDataFileWrapper.cpp
+    src/libtracepoint/PerfEventAbi.cpp
+    src/libtracepoint/PerfEventInfo.cpp
+    src/libtracepoint/PerfEventMetadata.cpp
+    src/libtracepoint/PerfEventSessionInfo.cpp)
 
 add_executable(eventing_collect ${COLLECT_SOURCES})
