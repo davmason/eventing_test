@@ -40,15 +40,15 @@ int main()
         TraceLoggingKeyword(event1_keyword),      // Event category bits.
         TraceLoggingUInt32(0));           // uint32 field named "iteration".
 
-    printf("Waiting for provider to be enabled.\n");
-    while (!TraceLoggingProviderEnabled(MyProvider, event1_level, event1_keyword))
-    {
-        printf("MyProviderName_L4K1 Event1 status=%x\n",
-            TraceLoggingProviderEnabled(MyProvider, event1_level, event1_keyword));
-        std::this_thread::sleep_for(std::chrono::milliseconds(5000));
-    }
+    // printf("Waiting for provider to be enabled.\n");
+    // while (!TraceLoggingProviderEnabled(MyProvider, event1_level, event1_keyword))
+    // {
+    //     printf("MyProviderName_L4K1 Event1 status=%x\n",
+    //         TraceLoggingProviderEnabled(MyProvider, event1_level, event1_keyword));
+    //     std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+    // }
 
-    printf("Provider enabled.\n");
+    // printf("Provider enabled.\n");
 
     const int event_count = 500000;
     const auto start = std::chrono::steady_clock::now();
