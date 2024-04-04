@@ -18,9 +18,14 @@ include_directories(src/libtracepoint/inc)
 
 add_link_options(--no-undefined -lpthread)
 
-set(SOURCES
-    src/main.cpp
+set(EVENT_SOURCES
+    src/event_main.cpp
     src/libtracepoint/eventheader-tracepoint.c
     src/libtracepoint/tracepoint.c)
 
-add_executable(eventing_test ${SOURCES})
+add_executable(eventing_test ${EVENT_SOURCES})
+
+set(COLLECT_SOURCES
+    src/collect_main.cpp)
+
+add_executable(eventing_collect ${COLLECT_SOURCES})
