@@ -33,7 +33,7 @@ set(COLLECT_SOURCES
     src/libtracepoint/UniqueHandles.cpp
     src/libtracepoint/PerfByteReader.cpp
     src/libtracepoint/PerfDataFile.cpp
-    src/libtracepoint/PerfDataFileWrapper.cpp
+    src/libtracepoint/PerfDataFileWriter.cpp
     src/libtracepoint/PerfEventAbi.cpp
     src/libtracepoint/PerfEventInfo.cpp
     src/libtracepoint/PerfEventMetadata.cpp
