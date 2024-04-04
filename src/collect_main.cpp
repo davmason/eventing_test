@@ -65,20 +65,7 @@ main(int argc, char* argv[])
     {
         fprintf(stderr, "\n");
 
-        if (mode == TracepointSessionMode::Circular)
-        {
-            sleep(5);
-        }
-        else
-        {
-            int activeCount;
-            error = session.WaitForWakeup(nullptr, nullptr, &activeCount);
-            fprintf(stderr, "WaitForWakeup() = %u, active = %d\n", error, activeCount);
-            if (error != 0)
-            {
-                sleep(5);
-            }
-        }
+        sleep(5);
 
         error = session.EnumerateSampleEventsUnordered(
             [](PerfSampleEventInfo const& event) -> int
