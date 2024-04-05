@@ -68,7 +68,7 @@ int main()
     const double milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(diff).count() / 1000.0;
 
     printf("Time to fire %d simple events: %f\n", event_count, seconds);
-    printf("Debug: diff.ms=%d", std::chrono::duration_cast<std::chrono::milliseconds>(diff).count());
+    printf("Debug: diff.ms=%d\n", std::chrono::duration_cast<std::chrono::milliseconds>(diff).count());
 
     TraceLoggingUnregister(MyProvider);
     return err;
