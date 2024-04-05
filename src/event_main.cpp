@@ -17,6 +17,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <linux/user_events.h>
+#include <functional>
 
 TRACELOGGING_DEFINE_PROVIDER(
     MyProvider,
@@ -25,7 +26,10 @@ TRACELOGGING_DEFINE_PROVIDER(
     (0xb7aa4d18, 0x240c, 0x5f41, 0x58, 0x52, 0x81, 0x7d, 0xbf, 0x47, 0x74, 0x72));
 
 const char *data_file = "/sys/kernel/tracing/user_events_data";
-volatile int enabled = 0;
+
+// TODO: can share these with different bits
+volatile int simple_enabled = 0;
+volatile int big_enabled = 0;
 
 static int event_reg(int fd, const char *command, int *write, volatile int *enabled)
 {
@@ -45,15 +49,28 @@ static int event_reg(int fd, const char *command, int *write, volatile int *enab
     return 0;
 }
 
+void time_it(std::function<void()> work, std::string description)
+{
+    const auto start = std::chrono::system_clock::now();
+
+    work();
+
+    const auto end = std::chrono::system_clock::now();
+    const auto diff = end - start;
+
+    printf("%s: time taken: %dms\n", description.c_str(), std::chrono::duration_cast<std::chrono::milliseconds>(diff).count());
+}
+
 int main()
 {
-    int data_fd, write;
+    int data_fd, simple_write, big_write;
     struct iovec io[2];
     __u32 count = 0;
 
     data_fd = open(data_file, O_RDWR);
 
-    if (event_reg(data_fd, "test u32 iteration", &write, &enabled) == -1)
+    if (event_reg(data_fd, "test u32 iteration", &simple_write, &simple_enabled) == -1
+        || event_reg(data_fd, "test2 char[1000] array", &big_write, &big_enabled) == -1)
     {
         printf("error user_events: %s\n", strerror(errno));
         return errno;
@@ -82,45 +99,41 @@ int main()
 
     printf("Waiting for event to be enabled.\n");
     // while (!TraceLoggingProviderEnabled(MyProvider, event1_level, event1_keyword))
-    while (!enabled)
+    while (!simple_enabled)
     {
         // printf("MyProviderName_L4K1 Event1 status=%x\n",
         //     TraceLoggingProviderEnabled(MyProvider, event1_level, event1_keyword));
-        printf("user_events enabled=%d\n", enabled);
+        printf("user_events simple_enabled=%d\n", simple_enabled);
         std::this_thread::sleep_for(std::chrono::milliseconds(5000));
     }
 
     printf("Event enabled.\n");
 
-    const int event_count = 500000;
-    const auto start = std::chrono::system_clock::now();
-    for (unsigned iteration = 1; iteration <= event_count; iteration += 1)
+    std::function<void()> simple_work = []()
     {
-        io[0].iov_base = &write;
-        io[0].iov_len = sizeof(write);
-        io[1].iov_base = &iteration;
-        io[1].iov_len = sizeof(iteration);
-
-        if (writev(data_fd, (const struct iovec *)io, 2) == -1)
+        const int event_count = 500000;
+        for (unsigned iteration = 1; iteration <= event_count; iteration += 1)
         {
-            printf("Error writing event %s\n", strerror(errno));
-            return errno;
+            io[0].iov_base = &simple_write;
+            io[0].iov_len = sizeof(simple_write);
+            io[1].iov_base = &iteration;
+            io[1].iov_len = sizeof(iteration);
+
+            if (writev(data_fd, (const struct iovec *)io, 2) == -1)
+            {
+                printf("Error writing event %s\n", strerror(errno));
+                return errno;
+            }
+            // TraceLoggingWrite(
+            //     MyProvider,                               // Provider to use for the event.
+            //     "SimpleEvent",                                 // Event name.
+            //     TraceLoggingLevel(event1_level),          // Event severity level.
+            //     TraceLoggingKeyword(event1_keyword),      // Event category bits.
+            //     TraceLoggingUInt32(iteration));           // uint32 field named "iteration".
         }
-        // TraceLoggingWrite(
-        //     MyProvider,                               // Provider to use for the event.
-        //     "SimpleEvent",                                 // Event name.
-        //     TraceLoggingLevel(event1_level),          // Event severity level.
-        //     TraceLoggingKeyword(event1_keyword),      // Event category bits.
-        //     TraceLoggingUInt32(iteration));           // uint32 field named "iteration".
     }
+    time_it(simple_work, "Firing 500,000 simple events");
 
-    const auto end = std::chrono::system_clock::now();
-    const auto diff = end - start;
-
-    const double seconds = std::chrono::duration_cast<std::chrono::milliseconds>(diff).count() / 1000.0;
-
-    printf("Time to fire %d simple events: %f\n", event_count, seconds);
-    printf("Debug: diff.ms=%d\n", std::chrono::duration_cast<std::chrono::milliseconds>(diff).count());
 
     // TraceLoggingUnregister(MyProvider);
     // return err;
