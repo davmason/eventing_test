@@ -131,7 +131,7 @@ int main()
             //     TraceLoggingKeyword(event1_keyword),      // Event category bits.
             //     TraceLoggingUInt32(iteration));           // uint32 field named "iteration".
         }
-    }
+    };
     time_it(simple_work, "Firing 500,000 simple events");
 
 
