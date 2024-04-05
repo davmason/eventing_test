@@ -21,6 +21,7 @@ set(EVENT_SOURCES
     src/event_main.cpp)
 
 add_executable(eventing_test ${EVENT_SOURCES})
+target_link_libraries(eventing_test eventheader-tracepoint)
 
 set(COLLECT_SOURCES
     src/collect_main.cpp)
