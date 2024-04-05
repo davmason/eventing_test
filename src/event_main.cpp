@@ -27,7 +27,7 @@ TRACELOGGING_DEFINE_PROVIDER(
 const char *data_file = "/sys/kernel/tracing/user_events_data";
 volatile int enabled = 0;
 
-static int event_reg(int fd, const char *command, int *write, int *enabled)
+static int event_reg(int fd, const char *command, int *write, volatile int *enabled)
 {
     struct user_reg reg = {0};
 
@@ -101,7 +101,11 @@ int main()
         io[1].iov_base = &iteration;
         io[1].iov_len = sizeof(iteration);
 
-        writev(data_fd, (const struct iovec *)io, 2);
+        if (writev(data_fd, (const struct iovec *)io, 2) == -1)
+        {
+            printf("Error writing event errno=%d\n", errno);
+            return errno;
+        }
         // TraceLoggingWrite(
         //     MyProvider,                               // Provider to use for the event.
         //     "SimpleEvent",                                 // Event name.
@@ -118,6 +122,7 @@ int main()
     printf("Time to fire %d simple events: %f\n", event_count, seconds);
     printf("Debug: diff.ms=%d\n", std::chrono::duration_cast<std::chrono::milliseconds>(diff).count());
 
-    TraceLoggingUnregister(MyProvider);
-    return err;
+    // TraceLoggingUnregister(MyProvider);
+    // return err;
+    return 0;
 }
