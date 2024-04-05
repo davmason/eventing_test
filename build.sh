@@ -10,7 +10,7 @@ fi
 
 pushd bin
 
-cmake ../ -DCMAKE_BUILD_TYPE=Release
+cmake ../ -DCMAKE_BUILD_TYPE=Debug
 
 make -j8
 
