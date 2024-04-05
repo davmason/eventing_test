@@ -25,7 +25,7 @@ TRACELOGGING_DEFINE_PROVIDER(
     (0xb7aa4d18, 0x240c, 0x5f41, 0x58, 0x52, 0x81, 0x7d, 0xbf, 0x47, 0x74, 0x72));
 
 const char *data_file = "/sys/kernel/tracing/user_events_data";
-int enabled = 0;
+volatile int enabled = 0;
 
 static int event_reg(int fd, const char *command, int *write, int *enabled)
 {
@@ -53,60 +53,61 @@ int main()
 
     data_fd = open(data_file, O_RDWR);
 
-    if (event_reg(data_fd, "test u32 count", &write, &enabled) == -1)
+    if (event_reg(data_fd, "test u32 iteration", &write, &enabled) == -1)
     {
         printf("error user_events: %d\n", errno);
         return errno;
     }
 
-    /* Setup iovec */
-    io[0].iov_base = &write;
-    io[0].iov_len = sizeof(write);
-    io[1].iov_base = &count;
-    io[1].iov_len = sizeof(count);
+    // int err = 0;
 
-    int err = 0;
+    // printf("\n");
 
-    printf("\n");
+    // err = TraceLoggingRegister(MyProvider);
+    // if (err != 0)
+    // {
+    //     printf("Error registering MyProvider err=%d\n", err);
+    //     return err;
+    // }
 
-    err = TraceLoggingRegister(MyProvider);
-    if (err != 0)
+    // event_level const event1_level = event_level_information;
+    // uint64_t const event1_keyword = 0x1;
+
+    // TraceLoggingWrite(
+    //     MyProvider,                               // Provider to use for the event.
+    //     "SimpleEvent",                                 // Event name.
+    //     TraceLoggingLevel(event1_level),          // Event severity level.
+    //     TraceLoggingKeyword(event1_keyword),      // Event category bits.
+    //     TraceLoggingUInt32(0));           // uint32 field named "iteration".
+
+    printf("Waiting for event to be enabled.\n");
+    // while (!TraceLoggingProviderEnabled(MyProvider, event1_level, event1_keyword))
+    while (!enabled)
     {
-        printf("Error registering MyProvider err=%d\n", err);
-        return err;
-    }
-
-    event_level const event1_level = event_level_information;
-    uint64_t const event1_keyword = 0x1;
-
-    TraceLoggingWrite(
-        MyProvider,                               // Provider to use for the event.
-        "SimpleEvent",                                 // Event name.
-        TraceLoggingLevel(event1_level),          // Event severity level.
-        TraceLoggingKeyword(event1_keyword),      // Event category bits.
-        TraceLoggingUInt32(0));           // uint32 field named "iteration".
-
-    printf("Waiting for provider to be enabled.\n");
-    while (!TraceLoggingProviderEnabled(MyProvider, event1_level, event1_keyword))
-    {
-        printf("MyProviderName_L4K1 Event1 status=%x\n",
-            TraceLoggingProviderEnabled(MyProvider, event1_level, event1_keyword));
+        // printf("MyProviderName_L4K1 Event1 status=%x\n",
+        //     TraceLoggingProviderEnabled(MyProvider, event1_level, event1_keyword));
         printf("user_events enabled=%d\n", enabled);
         std::this_thread::sleep_for(std::chrono::milliseconds(5000));
     }
 
-    printf("Provider enabled.\n");
+    printf("Event enabled.\n");
 
     const int event_count = 500000;
     const auto start = std::chrono::system_clock::now();
     for (unsigned iteration = 1; iteration <= event_count; iteration += 1)
     {
-        TraceLoggingWrite(
-            MyProvider,                               // Provider to use for the event.
-            "SimpleEvent",                                 // Event name.
-            TraceLoggingLevel(event1_level),          // Event severity level.
-            TraceLoggingKeyword(event1_keyword),      // Event category bits.
-            TraceLoggingUInt32(iteration));           // uint32 field named "iteration".
+        io[0].iov_base = &write;
+        io[0].iov_len = sizeof(write);
+        io[1].iov_base = &iteration;
+        io[1].iov_len = sizeof(iteration);
+
+        writev(data_fd, (const struct iovec *)io, 2);
+        // TraceLoggingWrite(
+        //     MyProvider,                               // Provider to use for the event.
+        //     "SimpleEvent",                                 // Event name.
+        //     TraceLoggingLevel(event1_level),          // Event severity level.
+        //     TraceLoggingKeyword(event1_keyword),      // Event category bits.
+        //     TraceLoggingUInt32(iteration));           // uint32 field named "iteration".
     }
 
     const auto end = std::chrono::system_clock::now();
