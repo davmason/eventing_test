@@ -64,7 +64,6 @@ void time_it(std::function<void()> work, std::string description)
 int main()
 {
     int data_fd, simple_write, big_write;
-    struct iovec io[2];
     __u32 count = 0;
 
     data_fd = open(data_file, O_RDWR);
@@ -112,6 +111,7 @@ int main()
     std::function<void()> simple_work = [&]()
     {
         const int event_count = 500000;
+        struct iovec io[2];
         for (unsigned iteration = 1; iteration <= event_count; iteration += 1)
         {
             io[0].iov_base = &simple_write;
