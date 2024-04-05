@@ -51,7 +51,7 @@ int main()
     printf("Provider enabled.\n");
 
     const int event_count = 500000;
-    const auto start = std::chrono::steady_clock::now();
+    const auto start = std::chrono::system_clock::now();
     for (unsigned iteration = 1; iteration <= event_count; iteration += 1)
     {
         TraceLoggingWrite(
@@ -62,7 +62,7 @@ int main()
             TraceLoggingUInt32(iteration));           // uint32 field named "iteration".
     }
 
-    const auto end = std::chrono::steady_clock::now();
+    const auto end = std::chrono::system_clock::now();
     const auto diff = end - start;
 
     const double seconds = std::chrono::duration_cast<std::chrono::milliseconds>(diff).count() / 1000.0;
