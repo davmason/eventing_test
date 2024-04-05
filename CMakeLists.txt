@@ -6,13 +6,7 @@ set(CMAKE_CXX_STANDARD 20)
 
 add_compile_options(-Wno-invalid-noreturn
                     -Wno-pragma-pack
-                    -Wno-int-to-pointer-cast
-                    -fPIC
-                    -fms-extensions
-                    -DBIT64
-                    -DPAL_STDCPP_COMPAT
-                    -DPLATFORM_UNIX
-                    -DHOST_64BIT)
+                    -Wno-int-to-pointer-cast)
 
 include_directories(src/libtracepoint/inc)
 
