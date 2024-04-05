@@ -10,6 +10,13 @@
 #include <chrono>
 #include <iostream>
 #include <thread>
+#include <errno.h>
+#include <sys/ioctl.h>
+#include <sys/mman.h>
+#include <sys/uio.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <linux/user_events.h>
 
 TRACELOGGING_DEFINE_PROVIDER(
     MyProvider,
@@ -17,8 +24,47 @@ TRACELOGGING_DEFINE_PROVIDER(
     // {b7aa4d18-240c-5f41-5852-817dbf477472}
     (0xb7aa4d18, 0x240c, 0x5f41, 0x58, 0x52, 0x81, 0x7d, 0xbf, 0x47, 0x74, 0x72));
 
+const char *data_file = "/sys/kernel/tracing/user_events_data";
+int enabled = 0;
+
+static int event_reg(int fd, const char *command, int *write, int *enabled)
+{
+    struct user_reg reg = {0};
+
+    reg.size = sizeof(reg);
+    reg.enable_bit = 31;
+    reg.enable_size = sizeof(*enabled);
+    reg.enable_addr = (__u64)enabled;
+    reg.name_args = (__u64)command;
+
+    if (ioctl(fd, DIAG_IOCSREG, &reg) == -1)
+        return -1;
+
+    *write = reg.write_index;
+
+    return 0;
+}
+
 int main()
 {
+    int data_fd, write;
+    struct iovec io[2];
+    __u32 count = 0;
+
+    data_fd = open(data_file, O_RDWR);
+
+    if (event_reg(data_fd, "test u32 count", &write, &enabled) == -1)
+    {
+        printf("error user_events: %d\n", errno);
+        return errno;
+    }
+
+    /* Setup iovec */
+    io[0].iov_base = &write;
+    io[0].iov_len = sizeof(write);
+    io[1].iov_base = &count;
+    io[1].iov_len = sizeof(count);
+
     int err = 0;
 
     printf("\n");
@@ -45,6 +91,7 @@ int main()
     {
         printf("MyProviderName_L4K1 Event1 status=%x\n",
             TraceLoggingProviderEnabled(MyProvider, event1_level, event1_keyword));
+        printf("user_events enabled=%d\n", enabled);
         std::this_thread::sleep_for(std::chrono::milliseconds(5000));
     }
 
