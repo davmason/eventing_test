@@ -109,7 +109,7 @@ int main()
 
     printf("Event enabled.\n");
 
-    std::function<void()> simple_work = []()
+    std::function<void()> simple_work = [&]()
     {
         const int event_count = 500000;
         for (unsigned iteration = 1; iteration <= event_count; iteration += 1)
