@@ -11,6 +11,7 @@ add_compile_options(-Wno-invalid-noreturn
                     -Wno-int-to-pointer-cast)
 
 include_directories(LinuxTracepoints/libtracepoint/include)
+include_directories(LinuxTracepoints/libeventheader-tracepoint/include)
 
 add_link_options(--no-undefined -lpthread -ltracepoint)
 
