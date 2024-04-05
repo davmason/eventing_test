@@ -55,7 +55,7 @@ int main()
 
     if (event_reg(data_fd, "test u32 iteration", &write, &enabled) == -1)
     {
-        printf("error user_events: %d\n", errno);
+        printf("error user_events: %s\n", strerror(errno));
         return errno;
     }
 
@@ -103,7 +103,7 @@ int main()
 
         if (writev(data_fd, (const struct iovec *)io, 2) == -1)
         {
-            printf("Error writing event errno=%d\n", errno);
+            printf("Error writing event %s\n", strerror(errno));
             return errno;
         }
         // TraceLoggingWrite(
