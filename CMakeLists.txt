@@ -12,6 +12,7 @@ add_compile_options(-Wno-invalid-noreturn
 
 include_directories(LinuxTracepoints/libtracepoint/include)
 include_directories(LinuxTracepoints/libeventheader-tracepoint/include)
+include_directories(LinuxTracepoints/libtracepoint-control-cpp/include)
 
 add_link_options(--no-undefined -lpthread -ltracepoint)
 
