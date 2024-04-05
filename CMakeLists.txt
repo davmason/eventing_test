@@ -26,4 +26,4 @@ set(COLLECT_SOURCES
     src/collect_main.cpp)
 
 add_executable(eventing_collect ${COLLECT_SOURCES})
-target_link_libraries(eventing_collect tracepoint-control-cpp)
+target_link_libraries(eventing_collect tracepoint-control)
