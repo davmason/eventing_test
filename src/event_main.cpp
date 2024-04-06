@@ -58,7 +58,7 @@ void time_it(std::function<void()> work, std::string description)
     const auto end = std::chrono::system_clock::now();
     const auto diff = end - start;
 
-    printf("%s: time taken: %dms\n", description.c_str(), std::chrono::duration_cast<std::chrono::milliseconds>(diff).count());
+    printf("%s: %dms\n", description.c_str(), std::chrono::duration_cast<std::chrono::milliseconds>(diff).count());
 }
 
 int main()
@@ -134,6 +134,34 @@ int main()
     };
     time_it(simple_work, "Firing 500,000 simple events");
 
+    std::function<void()> big_work = [&]()
+    {
+        const int event_count = 500000;
+        struct iovec io[2];
+        char[1000] data_buffer;
+        memset(data_buffer, 11, 1000);
+
+        for (unsigned iteration = 1; iteration <= event_count; iteration += 1)
+        {
+            io[0].iov_base = &big_write;
+            io[0].iov_len = sizeof(big_write);
+            io[1].iov_base = data_buffer;
+            io[1].iov_len = 1000;
+
+            if (writev(data_fd, (const struct iovec *)io, 2) == -1)
+            {
+                printf("Error writing event %s\n", strerror(errno));
+                return;
+            }
+            // TraceLoggingWrite(
+            //     MyProvider,                               // Provider to use for the event.
+            //     "SimpleEvent",                                 // Event name.
+            //     TraceLoggingLevel(event1_level),          // Event severity level.
+            //     TraceLoggingKeyword(event1_keyword),      // Event category bits.
+            //     TraceLoggingUInt32(iteration));           // uint32 field named "iteration".
+        }
+    };
+    time_it(big_work, "Firing 500,000 big events");
 
     // TraceLoggingUnregister(MyProvider);
     // return err;
