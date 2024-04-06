@@ -108,6 +108,7 @@ int main()
 
     printf("Event enabled.\n");
 
+    printf("What?\n");
     std::function<void()> simple_work = [&]()
     {
         const int event_count = 500000;
