@@ -134,6 +134,7 @@ int main()
     };
     time_it(simple_work, "Firing 500,000 simple events");
 
+    printf("What?\n");
     std::function<void()> big_work = [&]()
     {
         const int event_count = 500000;
