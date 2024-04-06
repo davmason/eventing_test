@@ -27,6 +27,8 @@ TRACELOGGING_DEFINE_PROVIDER(
 
 const char *data_file = "/sys/kernel/tracing/user_events_data";
 int data_fd = 0;
+int simple_write = 0;
+int big_write = 0;
 
 // TODO: can share these with different bits
 volatile int simple_enabled = 0;
@@ -64,9 +66,6 @@ void time_it(std::function<void()> work, std::string description)
 
 int main()
 {
-    int simple_write, big_write;
-    __u32 count = 0;
-
     data_fd = open(data_file, O_RDWR);
 
     if (event_reg(data_fd, "test u32 iteration", &simple_write, &simple_enabled) == -1
