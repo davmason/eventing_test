@@ -108,7 +108,6 @@ int main()
 
     printf("Event enabled.\n");
 
-    printf("What?\n");
     std::function<void()> simple_work = [&]()
     {
         const int event_count = 500000;
@@ -140,7 +139,7 @@ int main()
     {
         const int event_count = 500000;
         struct iovec io[2];
-        char[1000] data_buffer;
+        char data_buffer[1000];
         memset(data_buffer, 11, 1000);
 
         for (unsigned iteration = 1; iteration <= event_count; iteration += 1)
