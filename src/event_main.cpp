@@ -26,6 +26,7 @@ TRACELOGGING_DEFINE_PROVIDER(
     (0xb7aa4d18, 0x240c, 0x5f41, 0x58, 0x52, 0x81, 0x7d, 0xbf, 0x47, 0x74, 0x72));
 
 const char *data_file = "/sys/kernel/tracing/user_events_data";
+int data_fd = 0;
 
 // TODO: can share these with different bits
 volatile int simple_enabled = 0;
@@ -63,7 +64,7 @@ void time_it(std::function<void()> work, std::string description)
 
 int main()
 {
-    int data_fd, simple_write, big_write;
+    int simple_write, big_write;
     __u32 count = 0;
 
     data_fd = open(data_file, O_RDWR);
@@ -108,7 +109,7 @@ int main()
 
     printf("Event enabled.\n");
 
-    std::function<void()> simple_work = [&]()
+    std::function<void()> simple_work = []()
     {
         const int event_count = 500000;
         struct iovec io[2];
