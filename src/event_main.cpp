@@ -18,7 +18,6 @@
 #include <unistd.h>
 #include <linux/user_events.h>
 #include <functional>
-#include <conio.h>
 
 TRACELOGGING_DEFINE_PROVIDER(
     MyProvider,
@@ -77,7 +76,7 @@ int main()
     // }
 
     printf("Waiting...\n");
-    int ch = getch();
+    int ch = getchar();
 
     int err = 0;
 
