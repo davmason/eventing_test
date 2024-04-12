@@ -466,7 +466,7 @@ extern "C" {
             reg.enable_addr = (uintptr_t)&tp_state->status_word;
             reg.name_args = (uintptr_t)tp_name_args;
 
-            printf("Calling ioctl, name=%s addr=%p bit=%d\n", tp_name_args, reg.enable_addr, reg.enable_bit);
+            printf("Calling ioctl, name=%s structaddr=%p addr=%p bit=%d\n", &reg, tp_name_args, reg.enable_addr, reg.enable_bit);
             if (0 > ioctl(provider_state->data_file, DIAG_IOCSREG, &reg))
             {
                 printf("errno=%d\n", errno);
