@@ -103,7 +103,7 @@ int main()
         printf("MyProviderName_L4K1 Event1 status=%x\n",
             TraceLoggingProviderEnabled(MyProvider, event1_level, event1_keyword));
         // printf("user_events simple_enabled=%d\n", simple_enabled);
-        // std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+        std::this_thread::sleep_for(std::chrono::milliseconds(5000));
     }
 
     printf("Event enabled.\n");
