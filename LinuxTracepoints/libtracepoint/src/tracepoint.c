@@ -469,6 +469,7 @@ extern "C" {
             printf("Calling ioctl, name=%s\n", tp_name_args);
             if (0 > ioctl(provider_state->data_file, DIAG_IOCSREG, &reg))
             {
+                printf("errno=%d\n", errno);
                 err = errno;
             }
             else
