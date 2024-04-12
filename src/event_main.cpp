@@ -75,6 +75,9 @@ int main()
     //     return errno;
     // }
 
+    printf("Waiting...\n");
+    int ch = getch();
+
     int err = 0;
 
     printf("\n");
