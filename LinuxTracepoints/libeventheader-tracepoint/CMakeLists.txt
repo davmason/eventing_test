@@ -1,13 +1,15 @@
 cmake_minimum_required(VERSION 3.10)
+include(../version.cmake)
 project(eventheader-tracepoint
-    VERSION 1.3.3
+    VERSION ${LINUXTRACEPOINTS_VERSION}
     DESCRIPTION "EventHeader-encoded Linux tracepoints for C/C++"
     HOMEPAGE_URL "https://github.com/microsoft/LinuxTracepoints"
     LANGUAGES C CXX)
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
+set(CMAKE_C_STANDARD 90)    # Ensure projects declare minimum C requirement.
+set(CMAKE_CXX_STANDARD 98)  # Ensure projects declare minimum C++ requirement.
 set(BUILD_SAMPLES ON CACHE BOOL "Build sample code")
-set(BUILD_TOOLS ON CACHE BOOL "Build tool code")
 
 if(WIN32)
     add_compile_options(/W4 /WX /permissive-)
@@ -30,21 +32,17 @@ add_subdirectory(include)
 if(NOT WIN32)
 
     if(NOT TARGET tracepoint-headers)
-        find_package(tracepoint-headers 1.3 REQUIRED)
+        find_package(tracepoint-headers ${TRACEPOINT_HEADERS_MINVER} REQUIRED)
     endif()
 
     if(NOT TARGET tracepoint)
-        find_package(tracepoint 1.3 REQUIRED)
+        find_package(tracepoint ${TRACEPOINT_MINVER} REQUIRED)
     endif()
 
     add_subdirectory(src)
 
     if(BUILD_SAMPLES)
         add_subdirectory(samples)
-    endif()
-
-    if(BUILD_TOOLS)
-        add_subdirectory(tools)
     endif()
 
 endif()

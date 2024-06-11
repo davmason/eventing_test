@@ -146,7 +146,6 @@ A symbol declared by TPP_DECLARE_PROVIDER must later be defined in a
     _tpp_EXTERN_C struct _tpp_provider_symbol ProviderSymbol __attribute__((visibility("hidden"))); /* Empty provider variable to help with code navigation. */ \
     _tpp_EXTERN_C tracepoint_provider_state _tpp_PASTE2(_tppProvState_, ProviderSymbol) __attribute__((visibility("hidden")))  /* Actual provider variable is hidden behind prefix. */
 
-
 /*
 Macro TPP_DEFINE_PROVIDER(ProviderSymbol):
 Invoke this macro to define the symbol for a provider. A provider is a
@@ -439,7 +438,7 @@ corresponding function parameter.
 #endif
 
 #ifndef _tpp_NOEXCEPT
-#ifdef __cplusplus
+#if defined(__cplusplus) && __cplusplus > 201100
 #define _tpp_NOEXCEPT noexcept
 #else // __cplusplus
 #define _tpp_NOEXCEPT
@@ -724,9 +723,9 @@ _tppApplyArgsN(macro, n, (handler, ...)) --> macro##handler(n, ...)
 
 // Field type-name strings.
 #define _tppFieldString(n, args) _tppApplyArgs(_tppFieldString, args)
-#define _tppFieldString_tppArgByVal( FieldDeclString, Ctype, Value)               ""           FieldDeclString ";"
-#define _tppFieldString_tppArgByRef( FieldDeclString, Ctype, ConstSize, ValuePtr) ""           FieldDeclString ";"
-#define _tppFieldString_tppArgRelLoc(FieldDeclString, Ctype, ValueSize, ValuePtr) "__rel_loc " FieldDeclString ";"
+#define _tppFieldString_tppArgByVal( FieldDeclString, Ctype, Value)               " "           FieldDeclString ";"
+#define _tppFieldString_tppArgByRef( FieldDeclString, Ctype, ConstSize, ValuePtr) " "           FieldDeclString ";"
+#define _tppFieldString_tppArgRelLoc(FieldDeclString, Ctype, ValueSize, ValuePtr) " __rel_loc " FieldDeclString ";"
 #define _tppFieldString_tppArgRelLocStr _tppFieldString_tppArgRelLoc
 
 // Count the iovecs needed for event field data.
@@ -800,7 +799,7 @@ _tppApplyArgsN(macro, n, (handler, ...)) --> macro##handler(n, ...)
 #define _tppCommonImpl(ProviderSymbol, TracepointNameString, TracepointState, ...) \
     static tracepoint_definition const _tppEvt = { \
         &TracepointState, \
-        "" TracepointNameString " " _tpp_FOREACH(_tppFieldString, __VA_ARGS__) \
+        "" TracepointNameString _tpp_FOREACH(_tppFieldString, __VA_ARGS__) \
     }; \
     static tracepoint_definition const* _tppEvtPtr \
         __attribute__((section("_tppEventPtrs_" _tpp_STRINGIZE(ProviderSymbol)), used)) \
